@@ -1,0 +1,27 @@
+note over browser:
+save previously downloaded data.json
+in local notes variable
+end note
+
+note over browser:
+set onsubmit for form to generate note info
+and push it to local notes variable
+clear the field
+end note
+
+note over browser:
+redraw notes from local notes variable
+end note
+
+note over browser:
+send the saved note info to server
+in json format
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+server-->browser: HTTP Status 201
+note over server:
+send opeartion status in json format
+e.g. {"message":"note created"}
+end note
+

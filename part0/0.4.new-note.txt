@@ -1,0 +1,38 @@
+note over browser:
+send a post request with inputtext content
+after clicking the save button
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+
+server-->browser: HTTP Status 302
+note over server:
+redirect the request to the notes address
+end note
+
+note over browser:
+send get request for basic notes page with inputs
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: notes
+
+note over browser:
+send get request for the stylesheet that styles the page
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server->browser: main.css
+
+note over browser:
+send get request for the script that rewrites the page with new notes
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+
+note over browser:
+send get request for the notes content in json format
+end note
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server->browser: data.json
+
+note over browser:
+executes the event handler that renders notes from main.js
+end note
