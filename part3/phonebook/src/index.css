@@ -1,0 +1,19 @@
+.success {
+  border: 0.5rem solid green;
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  padding: 1%;
+  line-height: 2rem;
+  background-color: lightgray;
+  color: green;
+}
+
+.error {
+  color: red;
+  border: 0.5rem solid red;
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  padding: 1%;
+  line-height: 2rem;
+  background-color: lightgray;
+}
