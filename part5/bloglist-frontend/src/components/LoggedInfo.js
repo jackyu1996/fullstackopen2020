@@ -5,7 +5,7 @@ const LoggedInfo = ({ user, setUser }) => {
   return (
     <>
       <p>
-        {user.username} logged in
+        {user.name} logged in
         <button
           onClick={() => {
             window.localStorage.removeItem('loggedBloglistUser');

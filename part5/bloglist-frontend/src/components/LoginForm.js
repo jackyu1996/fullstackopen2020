@@ -17,8 +17,6 @@ const LoginForm = ({ handleLogin, setUser, setMessage }) => {
       blogService.setToken(user.token);
 
       setUser(user);
-      setUsername('');
-      setPassword('');
     } catch (e) {
       setMessage({ type: 'error', content: 'wrong username or password' });
     }
@@ -30,6 +28,7 @@ const LoginForm = ({ handleLogin, setUser, setMessage }) => {
         <p>
           username:
           <input
+            id="username"
             type="text"
             value={username}
             name="Username"
@@ -39,13 +38,16 @@ const LoginForm = ({ handleLogin, setUser, setMessage }) => {
         <p>
           password:
           <input
+            id="password"
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </p>
-        <button type="submit">Sign in</button>
+        <button
+          id="signin-button"
+          type="submit">Sign in</button>
       </form>
     </>
   );
