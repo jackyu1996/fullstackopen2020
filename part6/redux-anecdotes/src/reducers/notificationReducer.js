@@ -1,7 +1,6 @@
 const notificationReducer = (state = "", action) => {
   switch (action.type) {
-    case "VOTE":
-    case "NEW_ANECDOTE":
+    case "SET":
       return action.message;
     case "CLEAR":
       return "";
@@ -12,17 +11,15 @@ const notificationReducer = (state = "", action) => {
 
 export default notificationReducer;
 
-export const voteUpNotification = (message) => {
-  return {
-    type: "VOTE",
-    message: `you voted '${message}'`,
-  };
-};
-
-export const newAnecdoteNotification = (message) => {
-  return {
-    type: "NEW_ANECDOTE",
-    message: `you created '${message}'`,
+export const setNotification = (message, timeout) => {
+  return async (dispatch) => {
+    dispatch({
+      type: "SET",
+      message,
+    });
+    setTimeout(() => {
+      dispatch(clearNotification());
+    }, timeout * 1000);
   };
 };
 
