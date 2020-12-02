@@ -1,9 +1,17 @@
-const notificationReducer = (state = "", action) => {
+const initialState = {
+  message: "",
+  timer: null,
+};
+
+const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET":
-      return action.message;
+      return {
+        message: action.message,
+        timer: action.timer,
+      };
     case "CLEAR":
-      return "";
+      return initialState;
     default:
       return state;
   }
@@ -12,14 +20,19 @@ const notificationReducer = (state = "", action) => {
 export default notificationReducer;
 
 export const setNotification = (message, timeout) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    let timer = getState().notification.timer;
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = setTimeout(() => dispatch(clearNotification()), timeout * 1000);
+
     dispatch({
       type: "SET",
       message,
+      timer,
     });
-    setTimeout(() => {
-      dispatch(clearNotification());
-    }, timeout * 1000);
   };
 };
 

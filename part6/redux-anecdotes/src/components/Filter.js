@@ -1,11 +1,9 @@
 import React from "react";
 import { filterChange } from "../reducers/filterReducer";
-import { useDispatch } from "react-redux";
+import { connect } from "react-redux";
 
 const Filter = (props) => {
-  const dispatch = useDispatch();
-
-  const handleChange = (e) => dispatch(filterChange(e.target.value));
+  const handleChange = (e) => props.filterChange(e.target.value);
 
   const style = {
     marginBottom: 10,
@@ -18,4 +16,4 @@ const Filter = (props) => {
   );
 };
 
-export default Filter;
+export default connect(null, { filterChange })(Filter);
