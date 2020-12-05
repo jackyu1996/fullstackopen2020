@@ -73,15 +73,12 @@ blogsRouter.put('/:id', async (req, res) => {
     return res.status(404).json({ error: 'there is nothing to update' });
   }
 
-  if (blog.user.toString() === decodedToken.id) {
-    await Blog.findByIdAndUpdate(
-      idToUpdate,
-      blogToUpdate,
-      { new: true },
-    );
-    return res.status(204).end();
-  }
-  return res.status(401).json({ error: 'you have no right to upadte this one' });
+  await Blog.findByIdAndUpdate(
+    idToUpdate,
+    blogToUpdate,
+    { new: true },
+  );
+  return res.status(204).end();
 });
 
 blogsRouter.delete('/:id', async (req, res) => {
