@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Input, Button, Form } from "semantic-ui-react";
+
 import { useField } from "../hooks";
 import { addNew } from "../reducers/blogReducer";
 import blogService from "../services/blogs";
@@ -38,33 +40,41 @@ const BlogForm = () => {
     dispatch(addNew(createdBlog));
 
     dispatch(
-      setSuccess(`${createdBlog.title} by ${createdBlog.author} created?`)
+      setSuccess(`${createdBlog.title} by ${createdBlog.author} created!`)
     );
     clearFields();
   };
 
   return (
     <>
-      <button style={showWhenVisible} onClick={() => setVisible(!visible)}>
+      <Button
+        positive
+        style={showWhenVisible}
+        onClick={() => setVisible(!visible)}
+      >
         create new
-      </button>
-      <form onSubmit={handleAdd} style={hideWhenVisible}>
-        <p>
-          title: <input type="text" {...titleInput} />
-        </p>
+      </Button>
+      <Form onSubmit={handleAdd} style={hideWhenVisible}>
+        <Form.Field>
+          <Input icon="header" label="Title" type="text" {...titleInput} />
+        </Form.Field>
 
-        <p>
-          author: <input type="text" {...authorInput} />
-        </p>
+        <Form.Field>
+          <Input icon="write" label="Author" type="text" {...authorInput} />
+        </Form.Field>
 
-        <p>
-          url: <input type="text" {...urlInput} />
-        </p>
+        <Form.Field>
+          <Input icon="linkify" label="URL" type="text" {...urlInput} />
+        </Form.Field>
 
-        <button id="createButton" type="submit">
+        <Button positive id="createButton" type="submit">
           create
-        </button>
-      </form>
+        </Button>
+
+        <Button negative type="button" onClick={() => setVisible(!visible)}>
+          cancel
+        </Button>
+      </Form>
     </>
   );
 };

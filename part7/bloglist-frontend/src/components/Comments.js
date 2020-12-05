@@ -1,5 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { Header, Form, Button, List, Input } from "semantic-ui-react";
+
 import { useField } from "../hooks";
 import { addComment } from "../reducers/blogReducer";
 
@@ -10,20 +12,22 @@ const Comments = ({ blog }) => {
 
   return (
     <>
-      <h3>comments</h3>
-      <p>
-        <input {...commentInput} />
-        <button
-          onClick={() => dispatch(addComment(blog.id, commentInput.value))}
-        >
-          add comment
-        </button>
-      </p>
-      <ul>
+      <Header as="h3">comments</Header>
+      <Form>
+        <Form.Field>
+          <Input placeholder="Your wise words here!" {...commentInput} />
+          <Button
+            onClick={() => dispatch(addComment(blog.id, commentInput.value))}
+          >
+            add comment
+          </Button>
+        </Form.Field>
+      </Form>
+      <List bulleted>
         {blog.comments.map((c) => (
-          <li key={c.id}>{c.content}</li>
+          <List.Item key={c.id}>{c.content}</List.Item>
         ))}
-      </ul>
+      </List>
     </>
   );
 };

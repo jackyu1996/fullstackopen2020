@@ -1,5 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { Input, Button, Form } from "semantic-ui-react";
+
 import { login } from "../reducers/loginReducer";
 import { useField } from "../hooks";
 
@@ -22,19 +24,31 @@ const LoginForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <p>
-          username:
-          <input type="text" name="Username" {...usernameInput} />
-        </p>
-        <p>
-          password:
-          <input type="password" name="Password" {...passwordInput} />
-        </p>
-        <button id="signin-button" type="submit">
+      <Form onSubmit={handleSubmit}>
+        <Form.Field>
+          <Input
+            icon="user"
+            label="Username"
+            type="text"
+            name="Username"
+            {...usernameInput}
+          />
+        </Form.Field>
+
+        <Form.Field>
+          <Input
+            icon="user secret"
+            label="Password"
+            type="password"
+            name="Password"
+            {...passwordInput}
+          />
+        </Form.Field>
+
+        <Button positive id="signin-button" type="submit">
           Sign in
-        </button>
-      </form>
+        </Button>
+      </Form>
     </>
   );
 };

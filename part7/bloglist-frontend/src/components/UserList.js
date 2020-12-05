@@ -1,20 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Table, List } from "semantic-ui-react";
 
 export const User = ({ user }) => {
   if (!user) {
-    return "null";
+    return "";
   }
 
   return (
     <>
       <h2>{user.name}</h2>
       <p>added blogs</p>
-      <ul>
+      <List bulleted>
         {user.blogs.map((b) => (
-          <li key={b.id}>{b.title}</li>
+          <List.Item as={Link} to={`/blogs/${b.id}`} key={b.id}>
+            {b.title}
+          </List.Item>
         ))}
-      </ul>
+      </List>
     </>
   );
 };
@@ -23,26 +26,24 @@ const UserList = ({ users }) => {
   return (
     <>
       <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <td>username</td>
-            <td>blog created</td>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => {
-            return (
-              <tr key={u.username}>
-                <td>
-                  <Link to={`/users/${u.id}`}>{u.name}</Link>
-                </td>
-                <td>{u.blogs.length}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <Table basic="very" celled>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>username</Table.HeaderCell>
+            <Table.HeaderCell>blog created</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {users.map((u) => (
+            <Table.Row key={u.username}>
+              <Table.Cell>
+                <Link to={`/users/${u.id}`}>{u.name}</Link>
+              </Table.Cell>
+              <Table.Cell>{u.blogs.length}</Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
     </>
   );
 };

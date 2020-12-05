@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Switch, Link, Route, useRouteMatch } from "react-router-dom";
+import { Container, Menu, Header, Icon, Divider } from "semantic-ui-react";
 
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
@@ -45,45 +46,59 @@ const App = () => {
 
   return (
     <>
-      <nav>
-        <Link to="/blogs">blogs</Link>
-        <Link to="/users">users</Link>
-        <LoggedInfo loggedUser={loggedUser} />
-      </nav>
+      <Container>
+        <Menu>
+          <Menu.Item as={Link} to="/blogs">
+            blogs
+          </Menu.Item>
+          <Menu.Item as={Link} to="/users">
+            users
+          </Menu.Item>
+          {loggedUser.name ? (
+            <Menu.Item>
+              <LoggedInfo loggedUser={loggedUser} />
+            </Menu.Item>
+          ) : null}
+        </Menu>
 
-      <h2>blog app</h2>
-      <Notification />
+        <Header as="h1">
+          <Icon name="file" />
+          <Header.Content>blog app</Header.Content>
+        </Header>
+        <Notification />
 
-      {!loggedUser.token ? (
-        <>
-          <h2>log in to application</h2>
-          <LoginForm />
-        </>
-      ) : (
-        <BlogForm />
-      )}
+        {!loggedUser.token ? (
+          <>
+            <h2>log in to application</h2>
+            <LoginForm />
+          </>
+        ) : (
+          <BlogForm />
+        )}
 
-      <Switch>
-        <Route path="/blogs/:id">
-          <Blog blog={matchedBlog} />
-        </Route>
+        <Divider />
+        <Switch>
+          <Route path="/blogs/:id">
+            <Blog blog={matchedBlog} />
+          </Route>
 
-        <Route path="/users/:id">
-          <User user={matchedUser} />
-        </Route>
+          <Route path="/users/:id">
+            <User user={matchedUser} />
+          </Route>
 
-        <Route path="/users">
-          <UserList users={users} />
-        </Route>
+          <Route path="/users">
+            <UserList users={users} />
+          </Route>
 
-        <Route path="/blogs">
-          <BlogList blogs={blogs} />
-        </Route>
+          <Route path="/blogs">
+            <BlogList blogs={blogs} />
+          </Route>
 
-        <Route path="/">
-          <BlogList blogs={blogs} />
-        </Route>
-      </Switch>
+          <Route path="/">
+            <BlogList blogs={blogs} />
+          </Route>
+        </Switch>
+      </Container>
     </>
   );
 };

@@ -1,6 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { Item, Button } from "semantic-ui-react";
+
 import { likeBlog, removeBlog } from "../reducers/blogReducer";
 import blogService from "../services/blogs";
 import Comments from "./Comments";
@@ -8,6 +10,7 @@ import Comments from "./Comments";
 export const Blog = ({ blog }) => {
   const dispatch = useDispatch();
   const loggedUser = useSelector((state) => state.loggedUser);
+  const histroy = useHistory();
 
   const handleLike = (blog) => {
     blogService.setToken(loggedUser.token);
@@ -18,6 +21,7 @@ export const Blog = ({ blog }) => {
     if (window.confirm(`Delete ${blog.title} by ${blog.author}?`)) {
       blogService.setToken(loggedUser.token);
       dispatch(removeBlog(blog.id));
+      histroy.push("/blogs");
     }
   };
 
@@ -35,12 +39,16 @@ export const Blog = ({ blog }) => {
       </p>
       <p>
         {blog.likes} likes{" "}
-        <button onClick={() => handleLike(blog)}>like</button>
+        <Button compact onClick={() => handleLike(blog)}>
+          like
+        </Button>
       </p>
       <p>added by {blog.user.username}</p>
 
       {loggedUser && loggedUser.username === blog.user.username ? (
-        <button onClick={() => handleDelete(blog)}>remove</button>
+        <Button negative onClick={() => handleDelete(blog)}>
+          remove
+        </Button>
       ) : (
         ""
       )}
@@ -51,25 +59,17 @@ export const Blog = ({ blog }) => {
 };
 
 const BlogList = ({ blogs }) => {
-  const blogListStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
   return (
     <>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <p style={blogListStyle} key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>
+      <Item.Group>
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <Item as={Link} key={blog.id} to={`/blogs/${blog.id}`}>
               {blog.title} {blog.author}
-            </Link>
-          </p>
-        ))}
+            </Item>
+          ))}
+      </Item.Group>
     </>
   );
 };
