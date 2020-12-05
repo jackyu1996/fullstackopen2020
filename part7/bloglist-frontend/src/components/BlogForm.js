@@ -1,28 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useField } from "../hooks";
-import { newBlog } from "../reducers/blogFormReducer";
-import { useDispatch } from "react-redux";
+import { addNew } from "../reducers/blogReducer";
+import blogService from "../services/blogs";
+import { setSuccess } from "../reducers/notificationReducer";
 
 const BlogForm = () => {
   const { reset: titleReset, ...titleInput } = useField("title");
   const { reset: authorReset, ...authorInput } = useField("author");
   const { reset: urlReset, ...urlInput } = useField("url");
 
+  const [visible, setVisible] = useState(true);
+
+  const hideWhenVisible = { display: visible ? "none" : "" };
+  const showWhenVisible = { display: visible ? "" : "none" };
+
   const dispatch = useDispatch();
+  const loggedUser = useSelector((state) => state.loggedUser);
 
-  const handleAdd = (e) => {
-    e.preventDefault();
-
-    dispatch(newBlog(titleInput.value, authorInput.value, urlInput.value));
+  const clearFields = () => {
     titleReset();
     authorReset();
     urlReset();
   };
 
+  const handleAdd = (e) => {
+    e.preventDefault();
+
+    const createdBlog = {
+      title: titleInput.value,
+      author: authorInput.value,
+      url: urlInput.value,
+      likes: 0,
+    };
+
+    blogService.setToken(loggedUser.token);
+    dispatch(addNew(createdBlog));
+
+    dispatch(
+      setSuccess(`${createdBlog.title} by ${createdBlog.author} created?`)
+    );
+    clearFields();
+  };
+
   return (
-    <div className="formDiv">
-      <h2>create new</h2>
-      <form onSubmit={handleAdd}>
+    <>
+      <button style={showWhenVisible} onClick={() => setVisible(!visible)}>
+        create new
+      </button>
+      <form onSubmit={handleAdd} style={hideWhenVisible}>
         <p>
           title: <input type="text" {...titleInput} />
         </p>
@@ -39,7 +65,7 @@ const BlogForm = () => {
           create
         </button>
       </form>
-    </div>
+    </>
   );
 };
 

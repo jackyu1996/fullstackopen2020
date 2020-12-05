@@ -1,16 +1,11 @@
-const initialState = {
-  type: "success",
-  content: null,
-};
-
-const NotificationReducer = (state = initialState, action) => {
+const notificationReducer = (state = {}, action) => {
   switch (action.type) {
     case "SET_SUCCESS":
       return { type: "success", content: action.content };
     case "SET_ERROR":
       return { type: "error", content: action.content };
     case "CLEAR":
-      return { type: "", content: "" };
+      return {};
     default:
       return state;
   }
@@ -35,4 +30,4 @@ export const clearNotification = () => {
   };
 };
 
-export default NotificationReducer;
+export default notificationReducer;

@@ -1,20 +1,16 @@
-import React from 'react';
+import React from "react";
+import { logout } from "../reducers/loginReducer";
+import { useDispatch } from "react-redux";
 
-const LoggedInfo = ({ user, setUser }) => {
+const LoggedInfo = ({ loggedUser }) => {
+  const dispatch = useDispatch();
+  
   return (
     <>
-      <p>
-        {user.name} logged in
-        <button
-          onClick={() => {
-            window.localStorage.removeItem('loggedBloglistUser');
-            setUser(null);
-          }}
-        >
-          {' '}
-          logout
-        </button>
-      </p>
+      <span>
+        {loggedUser.name} logged in
+        <button onClick={() => dispatch(logout())}> logout</button>
+      </span>
     </>
   );
 };

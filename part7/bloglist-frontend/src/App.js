@@ -1,110 +1,89 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Switch, Link, Route, useRouteMatch } from "react-router-dom";
 
-import blogService from "./services/blogs";
-import loginService from "./services/login";
-
-import { setError } from "./reducers/notificationReducer";
-
-import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import LoggedInfo from "./components/LoggedInfo";
-import Togglable from "./components/Togglable";
+import BlogList, { Blog } from "./components/BlogList";
+import UserList, { User } from "./components/UserList";
+
+import { initBlogs } from "./reducers/blogReducer";
+import { initUsers } from "./reducers/userReducer";
+import { setUser } from "./reducers/loginReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
   const dispatch = useDispatch();
 
-  const blogFormRef = useRef();
+  const loggedUser = useSelector((state) => state.loggedUser);
+  const blogs = useSelector((state) => state.blogs);
+  const users = useSelector((state) => state.users);
+
+  const userMatch = useRouteMatch("/users/:id");
+  const blogMatch = useRouteMatch("/blogs/:id");
+
+  const matchedBlog = blogMatch
+    ? blogs.find((b) => b.id === blogMatch.params.id)
+    : null;
+
+  const matchedUser = userMatch
+    ? users.find((u) => u.id === userMatch.params.id)
+    : null;
 
   useEffect(() => {
-    (async () => {
-      const response = await blogService.getAll();
-      setBlogs(response.sort((a, b) => b.likes - a.likes));
-    })();
-  }, []);
+    dispatch(setUser());
+  }, [dispatch]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
+    dispatch(initBlogs());
+  }, [dispatch]);
 
-  //const createBlog = async (newBlog) => {
-  //try {
-  //blogFormRef.current.toggleVisibility();
-  //const returnedBlog = await blogService.create(newBlog);
-  //setBlogs(blogs.concat(returnedBlog));
-  //} catch (e) {
-  //dispatch(setError(e.message));
-  //}
-  //};
-
-  const addLike = async (updatedBlog) => {
-    try {
-      await blogService.update(updatedBlog.id, updatedBlog);
-      setBlogs(
-        blogs
-          .map((b) => {
-            b.likes = b.id === updatedBlog.id ? updatedBlog.likes : b.likes;
-            return b;
-          })
-          .sort((a, b) => b.likes - a.likes)
-      );
-    } catch (e) {
-      dispatch(setError(e.message));
-    }
-  };
-
-  const removeBlog = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      try {
-        await blogService.remove(blog.id);
-        setBlogs(
-          blogs
-            .filter((b) => b.id !== blog.id)
-            .sort((a, b) => b.likes - a.likes)
-        );
-      } catch (e) {
-        dispatch(setError(e.message));
-      }
-    }
-  };
+  useEffect(() => {
+    dispatch(initUsers());
+  }, [dispatch]);
 
   return (
     <>
-      {user === null ? (
+      <nav>
+        <Link to="/blogs">blogs</Link>
+        <Link to="/users">users</Link>
+        <LoggedInfo loggedUser={loggedUser} />
+      </nav>
+
+      <h2>blog app</h2>
+      <Notification />
+
+      {!loggedUser.token ? (
         <>
           <h2>log in to application</h2>
-          <Notification />
-          <LoginForm handleLogin={loginService.login} setUser={setUser} />
+          <LoginForm />
         </>
       ) : (
-        <>
-          <h2>blogs</h2>
-          <Notification />
-          <LoggedInfo user={user} setUser={setUser} />
-          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-            <BlogForm />
-          </Togglable>
-        </>
+        <BlogForm />
       )}
 
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          addLike={addLike}
-          loggedUser={user}
-          removeBlog={removeBlog}
-        />
-      ))}
+      <Switch>
+        <Route path="/blogs/:id">
+          <Blog blog={matchedBlog} />
+        </Route>
+
+        <Route path="/users/:id">
+          <User user={matchedUser} />
+        </Route>
+
+        <Route path="/users">
+          <UserList users={users} />
+        </Route>
+
+        <Route path="/blogs">
+          <BlogList blogs={blogs} />
+        </Route>
+
+        <Route path="/">
+          <BlogList blogs={blogs} />
+        </Route>
+      </Switch>
     </>
   );
 };
