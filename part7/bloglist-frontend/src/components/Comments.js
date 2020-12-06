@@ -17,7 +17,10 @@ const Comments = ({ blog }) => {
         <Form.Field>
           <Input placeholder="Your wise words here!" {...commentInput} />
           <Button
-            onClick={() => dispatch(addComment(blog.id, commentInput.value))}
+            onClick={() => {
+              dispatch(addComment(blog.id, commentInput.value));
+              resetInput();
+            }}
           >
             add comment
           </Button>

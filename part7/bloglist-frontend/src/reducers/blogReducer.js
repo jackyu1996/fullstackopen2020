@@ -8,11 +8,17 @@ const blogReducer = (state = [], action) => {
     case "ADD_NEW":
       return state.concat(action.data);
     case "ADD_COMMENT":
-      return state.map((b) =>
-        b.id === action.id
-          ? { ...b, comments: b.comments.concat(action.content) }
-          : b
-      );
+      return state.map((b) => {
+        return b.id === action.blogId
+          ? {
+              ...b,
+              comments: b.comments.concat({
+                id: action.id,
+                content: action.content,
+              }),
+            }
+          : b;
+      });
     case "LIKE":
       return state.map((b) => (b.id === action.data.id ? action.data : b));
     case "DELETE":
@@ -89,6 +95,7 @@ export const addComment = (blogId, content) => {
       const data = await blogService.createComment(blogId, content);
       dispatch({
         type: "ADD_COMMENT",
+        blogId,
         id: data.id,
         content: data.content,
       });

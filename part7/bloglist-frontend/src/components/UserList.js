@@ -29,7 +29,7 @@ const UserList = ({ users }) => {
       <Table basic="very" celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>username</Table.HeaderCell>
+            <Table.HeaderCell>name</Table.HeaderCell>
             <Table.HeaderCell>blog created</Table.HeaderCell>
           </Table.Row>
         </Table.Header>

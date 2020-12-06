@@ -77,6 +77,7 @@ const App = () => {
         )}
 
         <Divider />
+
         <Switch>
           <Route path="/blogs/:id">
             <Blog blog={matchedBlog} />
@@ -98,6 +99,7 @@ const App = () => {
             <BlogList blogs={blogs} />
           </Route>
         </Switch>
+
       </Container>
     </>
   );
