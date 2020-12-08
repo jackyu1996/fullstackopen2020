@@ -24,6 +24,7 @@ yarn-error.log*
 
 # create-react-app default files
 
+.eslintrc.json
 package-lock.json
 yarn.lock
 .env
