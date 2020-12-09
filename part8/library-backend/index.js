@@ -1,4 +1,6 @@
-const { ApolloServer, UserInputError, gql } = require('apollo-server');
+const {
+  ApolloServer, UserInputError, AuthenticationError, gql,
+} = require('apollo-server');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -9,8 +11,6 @@ const User = require('./models/User');
 
 const { SECRET } = process.env;
 const { MONGODB_URI } = process.env;
-
-console.log('connecting to', MONGODB_URI);
 
 mongoose
   .connect(MONGODB_URI, {
@@ -48,8 +48,8 @@ const typeDefs = gql`
   type Author {
     name: String!
     born: Int
+    bookCount: Int
     id: ID!
-    bookCount: Int!
   }
 
   type Query {
@@ -80,29 +80,39 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: (root, args) => {
+    allBooks: async (root, args) => {
       if (args.author) {
-        return Book.find({ author: args.author });
+        const author = await Author.findOne({ name: args.author });
+        if (!author) {
+          throw new UserInputError('Author not in Database yet!');
+        }
+        return Book.find({ author: author._id });
       }
-      return Book.find({});
+      return Book.find({}).populate('author');
     },
-    allAuthors: () => Author.find({}),
+    allAuthors: async () => Author.find({}),
     me: (root, args, context) => context.currentUser,
   },
 
   Author: {
-    bookCount: (root) => {
-      //const author = Author.findOne({ name: root.name });
-      //console.log(author);
-      //const book = Book.find({ author });
-      //return book.countDocuments();
+    bookCount: async (root) => {
+      const author = await Author.findOne({ name: root.name });
+      return Book.find({ author: author.id }).countDocuments();
     },
   },
 
   Mutation: {
-    addBook: async (root, args) => {
-      const author = Author.findOne({ name: args.author });
-      const book = new Book({ ...args, author: author.name });
+    addBook: async (root, args, { currentUser }) => {
+      if (!currentUser) {
+        throw new AuthenticationError('Not authenticated');
+      }
+
+      const author = await Author.findOne({ name: args.author });
+      if (!author) {
+        throw new UserInputError('Author not in Database yet!');
+      }
+
+      const book = new Book({ ...args, author: author._id });
 
       try {
         await book.save();
@@ -115,8 +125,16 @@ const resolvers = {
       return book;
     },
 
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, { currentUser }) => {
+      if (!currentUser) {
+        throw new AuthenticationError('Not authenticated');
+      }
+
       const author = await Author.findOne({ name: args.name });
+      if (!author) {
+        throw new UserInputError('Author not in Database yet!');
+      }
+
       author.born = args.setBornTo;
 
       try {
@@ -130,7 +148,7 @@ const resolvers = {
     },
 
     createUser: async (root, args) => {
-      const user = new User({ ...args });
+      const user = new User({ username: args.username });
 
       try {
         await user.save();
@@ -147,7 +165,7 @@ const resolvers = {
       const user = await User.findOne({ username: args.username });
 
       if (!user || args.password !== 'secret') {
-        throw new UserInputError('wrong credentials');
+        throw new UserInputError('Wrong credentials');
       }
 
       const userForToken = {

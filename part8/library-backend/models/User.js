@@ -5,11 +5,11 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    minlength: 5,
+    minlength: 3,
   },
   favoriteGenre: {
     type: String,
-    minlength: 5,
+    minlength: 3,
   },
 });
 
