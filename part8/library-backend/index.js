@@ -88,6 +88,11 @@ const resolvers = {
         }
         return Book.find({ author: author._id });
       }
+
+      if (args.genre) {
+        return Book.find({ genres: args.genre });
+      }
+
       return Book.find({}).populate('author');
     },
     allAuthors: async () => Author.find({}),
