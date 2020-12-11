@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { ALL_BOOKS, ADD_BOOK, ALL_AUTHORS } from "../queries";
+import { ADD_BOOK } from "../queries";
 
-const NewBook = ({ show }) => {
+const NewBook = ({ show, updateCacheWith }) => {
   const [title, setTitle] = useState("");
   const [author, setAuhtor] = useState("");
   const [published, setPublished] = useState("");
@@ -10,7 +10,10 @@ const NewBook = ({ show }) => {
   const [genres, setGenres] = useState([]);
 
   const [createBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    update: (store, res) => {
+      // Watch out, the returned data is the function name of said mutation
+      updateCacheWith(res.data.addBook);
+    },
   });
 
   if (!show) {
