@@ -16,7 +16,7 @@ const App = () => {
 
   const updateCacheWith = (addedBook) => {
     const alreadyIn = (arr, obj) => {
-      arr.map((b) => b.id).includes(obj.id);
+      return arr.map((b) => b.title).includes(obj.title);
     };
 
     const dataInStore = client.readQuery({ query: ALL_BOOKS });

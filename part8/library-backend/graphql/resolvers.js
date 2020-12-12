@@ -67,7 +67,7 @@ module.exports = {
         author.books.push(returnedBook.id);
         author.save();
 
-        const fullBook = await returnedBook.populate('author');
+        const fullBook = await returnedBook.populate('author').execPopulate();
 
         pubsub.publish('BOOK_ADDED', { bookAdded: fullBook });
 

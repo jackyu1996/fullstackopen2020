@@ -50,7 +50,7 @@ const SetBirthyear = ({ authors }) => {
   );
 };
 
-const Authors = ({show}) => {
+const Authors = ({ show }) => {
   const result = useQuery(ALL_AUTHORS);
 
   if (!show) {
