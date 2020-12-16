@@ -7,7 +7,7 @@ const data = [
         name: "John McClane",
         dateOfBirth: "1986-07-09",
         ssn: "090786-122X",
-        gender: "male",
+        gender: "other",
         occupation: "New york city cop",
     },
     {
