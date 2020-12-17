@@ -1,11 +1,13 @@
 import React from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Icon } from "semantic-ui-react";
+import { Icon, Divider } from "semantic-ui-react";
 
 import { updatePatient, useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
+
+import EntryInfo from './EntryInfo';
 
 const PatientInfo = () => {
     const { id } = useParams<{ id: string }>();
@@ -49,7 +51,10 @@ const PatientInfo = () => {
             </h2>
             <p>ssn: {patient.ssn}</p>
             <p>occupation: {patient.occupation}</p>
-            <p>Date of Birth: {patient.dateOfBirth}</p>
+
+            <Divider hidden />
+            <h2>entries</h2>
+            {patient.entries ? patient.entries.map(e=><EntryInfo key={e.id} {...e} />) : null}
         </>
     );
 };
