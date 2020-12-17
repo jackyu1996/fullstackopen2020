@@ -7,7 +7,7 @@ import { updatePatient, useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
 
-import EntryInfo from './EntryInfo';
+import EntryDetails from './EntryDetails';
 
 const PatientInfo = () => {
     const { id } = useParams<{ id: string }>();
@@ -54,7 +54,7 @@ const PatientInfo = () => {
 
             <Divider hidden />
             <h2>entries</h2>
-            {patient.entries ? patient.entries.map(e=><EntryInfo key={e.id} {...e} />) : null}
+            {patient.entries ? patient.entries.map(e=><EntryDetails key={e.id} {...e} />) : null}
         </>
     );
 };
