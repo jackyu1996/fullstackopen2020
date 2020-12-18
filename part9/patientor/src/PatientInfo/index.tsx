@@ -3,9 +3,10 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Icon, Divider } from "semantic-ui-react";
 
-import { updatePatient, useStateValue } from "../state";
+import { updatePatient, useStateValue, addEntry } from "../state";
 import { apiBaseUrl } from "../constants";
-import { Patient } from "../types";
+import { Patient, Entry, NewEntry } from "../types";
+import AddEntryForm from '../AddEntryForm';
 
 import EntryDetails from './EntryDetails';
 
@@ -13,6 +14,22 @@ const PatientInfo = () => {
     const { id } = useParams<{ id: string }>();
     const [{ patients }, dispatch] = useStateValue();
     const [patient, setPatient] = React.useState<Patient>(patients[id]);
+    const [error, setError] = React.useState<string | undefined>();
+
+    const submitNewEntry = async (values: NewEntry) => {
+        try {
+            const { data: newEntry } = await axios.post<Entry>(
+                `${apiBaseUrl}/patients/${id}/entries`,
+                values
+            );
+            setPatient({...patient, entries: patient.entries.concat(newEntry)});
+            dispatch(addEntry(patient, newEntry));
+        } catch (e) {
+            console.error(e.response.data);
+            console.error(error);
+            setError(e.response.data.error);
+        }
+    };
 
     React.useEffect(() => {
         const fetchPatient = async () => {
@@ -55,6 +72,9 @@ const PatientInfo = () => {
             <Divider hidden />
             <h2>entries</h2>
             {patient.entries ? patient.entries.map(e=><EntryDetails key={e.id} {...e} />) : null}
+
+            <Divider hidden />
+            <AddEntryForm onSubmit={submitNewEntry} onCancel={()=>{console.error(error);}} />
         </>
     );
 };

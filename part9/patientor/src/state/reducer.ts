@@ -1,5 +1,5 @@
 import { State } from "./state";
-import { Patient, Diagnosis } from "../types";
+import { Patient, Diagnosis, Entry } from "../types";
 
 export type Action =
     | {
@@ -7,16 +7,21 @@ export type Action =
           payload: Patient[];
       }
     | {
-        type: "SET_DIAGNOSIS_LIST";
-        payload: Diagnosis[];
-    }
-        |{
+          type: "SET_DIAGNOSIS_LIST";
+          payload: Diagnosis[];
+      }
+    | {
           type: "ADD_PATIENT";
           payload: Patient;
       }
     | {
           type: "UPDATE_PATIENT";
           payload: Patient;
+      }
+    | {
+          type: "ADD_ENTRY";
+          patient: Patient;
+          payload: Entry;
       };
 
 export const reducer = (state: State, action: Action): State => {
@@ -37,7 +42,10 @@ export const reducer = (state: State, action: Action): State => {
                 ...state,
                 diagnoses: {
                     ...action.payload.reduce(
-                        (memo, diagnosis) => ({ ...memo, [diagnosis.code]: diagnosis }),
+                        (memo, diagnosis) => ({
+                            ...memo,
+                            [diagnosis.code]: diagnosis,
+                        }),
                         {}
                     ),
                     ...state.diagnoses,
@@ -52,6 +60,17 @@ export const reducer = (state: State, action: Action): State => {
                     [action.payload.id]: action.payload,
                 },
             };
+        case "ADD_ENTRY":
+            return {
+                ...state,
+                patients: {
+                    ...state.patients,
+                    [action.patient.id]: {
+                        ...action.patient,
+                        entries: action.patient.entries.concat(action.payload),
+                    },
+                },
+            };
         default:
             return state;
     }
@@ -64,7 +83,7 @@ export const setPatientList = (payload: Patient[]): Action => {
     };
 };
 
-export const setDiagnosisList= (payload: Diagnosis[]): Action => {
+export const setDiagnosisList = (payload: Diagnosis[]): Action => {
     return {
         type: "SET_DIAGNOSIS_LIST",
         payload,
@@ -80,6 +99,14 @@ export const addPatient = (payload: Patient): Action => {
 export const updatePatient = (payload: Patient): Action => {
     return {
         type: "UPDATE_PATIENT",
+        payload,
+    };
+};
+
+export const addEntry = (patient: Patient, payload: Entry): Action => {
+    return {
+        type: "ADD_ENTRY",
+        patient,
         payload,
     };
 };

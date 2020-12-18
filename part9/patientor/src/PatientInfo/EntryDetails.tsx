@@ -1,7 +1,7 @@
 import React from 'react';
 import {Entry, HospitalEntry, OccupationalHealthcareEntry, HealthCheckEntry} from '../types';
 import {useStateValue} from '../state';
-import {Icon, Segment, Header} from 'semantic-ui-react';
+import {Icon, Segment, Header, List} from 'semantic-ui-react';
 
 const Hospital = (e: HospitalEntry) =>{
     const [state, ] = useStateValue();
@@ -15,14 +15,21 @@ const Hospital = (e: HospitalEntry) =>{
 
     return (
         <>
-            <p>{e.date} <i>{e.description}</i></p>
-            <ul>
-                {
-                    e.diagnosisCodes ?
-                        e.diagnosisCodes.map(c=><li key={c}>{c} {findNameBy(c)}</li>):
-                        null
-                }
-            </ul>
+            <Segment>
+                <Header as='h2'>
+                    {e.date} <Icon.Group size="large">
+                        <Icon name="hospital" />
+                    </Icon.Group>
+                </Header>
+                <Header as='h5' color='grey'><i>{e.description}</i></Header>
+                <List bulleted>
+                    {
+                        e.diagnosisCodes ?
+                            e.diagnosisCodes.map(c=><List.Item key={c}>{c} {findNameBy(c)}</List.Item>):
+                            null
+                    }
+                </List>
+            </Segment>
         </>
     );
 };
@@ -36,7 +43,7 @@ const OccupationalHealthcare = (e: OccupationalHealthcareEntry) =>{
                 </Icon.Group>
                 <Header.Content>{e.employerName}</Header.Content>
             </Header>
-            <Header as='h6' color='grey'><i>{e.description}</i></Header>
+            <Header as='h5' color='grey'><i>{e.description}</i></Header>
         </Segment>
     );
 };
@@ -49,7 +56,7 @@ const HealthCheck = (e: HealthCheckEntry)=>{
                     <Icon name="user md" />
                 </Icon.Group>
             </Header>
-            <Header as='h6' color='grey'><i>{e.description}</i></Header>
+            <Header as='h5' color='grey'><i>{e.description}</i></Header>
             <p>
                 {
                     e.healthCheckRating === 0 ?
