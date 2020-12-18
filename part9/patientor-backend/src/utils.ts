@@ -9,6 +9,7 @@ import {
     Discharge,
     Gender,
     HealthCheckRating,
+    SickLeave,
 } from "./types";
 
 const isString = (text: any): text is string => {
@@ -71,7 +72,12 @@ const parseDischarge = (discharge: any): Discharge => {
         !isDate(discharge.date) ||
         !isString(discharge.criteria)
     ) {
-        throw new Error("Incorrect or missing discharge: " + discharge);
+        throw new Error(
+            "Incorrect or missing discharge: " +
+                discharge.date +
+                " " +
+                discharge.criteria
+        );
     }
     return discharge as Discharge;
 };
@@ -88,6 +94,31 @@ const parseHealthCheckingRating = (
         );
     }
     return healthCheckRating;
+};
+
+const parseDiagnosisCodes = (codes: any) => {
+    if (!codes || !Array.isArray(codes) || !codes.every((c) => isString(c))) {
+        throw new Error("Incorrect or missing diagnosisCodes: " + codes);
+    }
+    return codes as string[];
+};
+
+const parseSickLeave = (sickLeave: any) => {
+    if (
+        !sickLeave ||
+        !sickLeave.startDate ||
+        !sickLeave.endDate ||
+        !isDate(sickLeave.startDate) ||
+        !isDate(sickLeave.endDate)
+    ) {
+        throw new Error(
+            "Incorrect or missing sickLeave: " +
+                sickLeave.startDate +
+                " " +
+                sickLeave.endDate
+        );
+    }
+    return sickLeave as SickLeave;
 };
 
 export const toNewPatient = (object: any): NewPatient => {
@@ -110,7 +141,10 @@ export const toNewEntry = (object: any): NewEntry | undefined => {
                 specialist: parseName(object.specialist),
                 description: parseDescription(object.description),
                 discharge: parseDischarge(object.discharge),
-            };
+                ...(object.diagnosisCodes && {
+                    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+                }),
+            } as NewEntry;
         case "HealthCheck":
             return {
                 type: "HealthCheck",
@@ -120,7 +154,10 @@ export const toNewEntry = (object: any): NewEntry | undefined => {
                 healthCheckRating: parseHealthCheckingRating(
                     object.healthCheckRating
                 ),
-            };
+                ...(object.diagnosisCodes && {
+                    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+                }),
+            } as NewEntry;
         case "OccupationalHealthcare":
             return {
                 type: "OccupationalHealthcare",
@@ -128,7 +165,13 @@ export const toNewEntry = (object: any): NewEntry | undefined => {
                 specialist: parseName(object.specialist),
                 description: parseDescription(object.description),
                 employerName: parseName(object.employerName),
-            };
+                ...(object.diagnosisCodes && {
+                    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+                }),
+                ...(object.sickLeave && {
+                    sickLeave: parseSickLeave(object.sickLeave),
+                }),
+            } as NewEntry;
         default:
             return undefined;
     }

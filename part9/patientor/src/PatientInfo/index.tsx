@@ -25,9 +25,7 @@ const PatientInfo = () => {
             setPatient({...patient, entries: patient.entries.concat(newEntry)});
             dispatch(addEntry(patient, newEntry));
         } catch (e) {
-            console.error(e.response.data);
-            console.error(error);
-            setError(e.response.data.error);
+            setError(e.response.data);
         }
     };
 
@@ -74,7 +72,7 @@ const PatientInfo = () => {
             {patient.entries ? patient.entries.map(e=><EntryDetails key={e.id} {...e} />) : null}
 
             <Divider hidden />
-            <AddEntryForm onSubmit={submitNewEntry} onCancel={()=>{console.error(error);}} />
+            <AddEntryForm onSubmit={submitNewEntry} onCancel={()=>{setError(undefined);}} error={error}  />
         </>
     );
 };

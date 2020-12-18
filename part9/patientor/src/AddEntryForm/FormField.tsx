@@ -1,6 +1,6 @@
 import React from "react";
-import { Field  } from "formik";
-import { Form } from "semantic-ui-react";
+import { FormikProps, ErrorMessage } from "formik";
+import { Form, DropdownProps, Dropdown } from "semantic-ui-react";
 import { EntryType } from "../types";
 
 export type EntryTypeOption = {
@@ -8,25 +8,45 @@ export type EntryTypeOption = {
     label: string;
 };
 
-type SelectFieldProps = {
-    name: string;
-    label: string;
-    options: EntryTypeOption[];
-};
+export const TypeSelection = ({
+    types,
+    setFieldValue,
+    setFieldTouched,
+    changeType,
+}: {
+    types: EntryTypeOption[];
+    setFieldValue: FormikProps<{ type: string }>["setFieldValue"];
+    setFieldTouched: FormikProps<{ type: string }>["setFieldTouched"];
+    changeType: (type: string) => void;
+}) => {
+    const field = "type";
+    const onChange = (
+        _event: React.SyntheticEvent<HTMLElement, Event>,
+        data: DropdownProps
+    ) => {
+        setFieldTouched(field, true);
+        setFieldValue(field, data.value);
+        data.value && changeType(data.value.toString());
+    };
 
-export const SelectField: React.FC<SelectFieldProps> = ({
-    name,
-    label,
-    options
-}: SelectFieldProps) => (
-    <Form.Field>
-        <label>{label}</label>
-        <Field as="select" name={name} className="ui dropdown">
-            {options.map(option => (
-                <option key={option.value} value={option.value}>
-                    {option.label || option.value}
-                </option>
-            ))}
-        </Field>
-    </Form.Field>
-);
+    const stateOptions = types.map(type => ({
+        key: type.value,
+        text: `${type.label}`,
+        value: type.value
+    }));
+
+    return (
+        <Form.Field>
+            <label>Type</label>
+            <Dropdown
+                fluid
+                search
+                selection
+                defaultValue={stateOptions[1].value}
+                options={stateOptions}
+                onChange={onChange}
+            />
+            <ErrorMessage name={field} />
+        </Form.Field>
+    );
+};

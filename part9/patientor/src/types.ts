@@ -13,7 +13,7 @@ export enum Gender {
 export enum EntryType {
     Hospital = "Hospital",
     HealthCheck = "HealthCheck",
-    OccupationalHealthCare = "OccupationalHealthCare",
+    OccupationalHealthcare = "OccupationalHealthcare",
 }
 
 interface Discharge {
